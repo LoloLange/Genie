@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { SetStateAction, useEffect, useState } from "react";
+import { SettingsType } from "../types";
 
 export const Settings = ({
   setShowSettings,
@@ -32,14 +33,17 @@ export const Settings = ({
 
   const [showModelDropdown, setShowModelDropdown] = useState(false);
   const [showAppearanceDropdown, setShowAppearanceDropdown] = useState(false);
-  const [settings, setSettings] = useState(
-    JSON.parse(localStorage.getItem("settings"))
-  );
+  const [settings, setSettings] = useState<SettingsType | null>(() => {
+    const storedSettings = localStorage.getItem("settings");
+    return storedSettings ? JSON.parse(storedSettings) : null;
+  });
 
   useEffect(() => {
-    setSelectedColor(settings.selectedColor);
-    setAppearance(settings.appearance);
-    setModel(settings.model);
+    if (settings) {
+      setSelectedColor(settings.selectedColor);
+      setAppearance(settings.appearance);
+      setModel(settings.model);
+    }
   }, []);
 
   useEffect(() => {
@@ -69,13 +73,27 @@ export const Settings = ({
   };
 
   return (
-    <div className={`w-[500px] ${
-          mode === "dark" ? "bg-gray border-gray-selected" : "bg-light-mode border-light-mode-selected"
-        } border-2 rounded-xl shadow-xl p-6`}>
-      <div className={`flex justify-between border-b-2 ${mode === "dark" ? "border-gray-selected" : "border-light-mode-selected"}  pb-2`}>
+    <div
+      className={`w-[500px] ${
+        mode === "dark"
+          ? "bg-gray border-gray-selected"
+          : "bg-light-mode border-light-mode-selected"
+      } border-2 rounded-xl shadow-xl p-6`}
+    >
+      <div
+        className={`flex justify-between border-b-2 ${
+          mode === "dark"
+            ? "border-gray-selected"
+            : "border-light-mode-selected"
+        }  pb-2`}
+      >
         <p className="font-semibold text-lg">Settings</p>
         <svg
-          onClick={() => (setShowSettings(false), setShowAppearanceDropdown(false), setShowModelDropdown(false))}
+          onClick={() => (
+            setShowSettings(false),
+            setShowAppearanceDropdown(false),
+            setShowModelDropdown(false)
+          )}
           className="size-6 fill-[#aaa] cursor-pointer"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 384 512"
@@ -96,7 +114,11 @@ export const Settings = ({
                   backgroundColor: c,
                 }}
                 className={`border-2 ${
-                  selectedColor === c ? "border-[#aaa]" : mode === "dark" ? "border-gray-selected" : "border-light-mode-selected"
+                  selectedColor === c
+                    ? "border-[#aaa]"
+                    : mode === "dark"
+                    ? "border-gray-selected"
+                    : "border-light-mode-selected"
                 } size-7 flex rounded-full cursor-pointer duration-300`}
               ></span>
             ))}
@@ -104,10 +126,16 @@ export const Settings = ({
         </div>
         <div className="flex flex-col items-start gap-y-3">
           <div className="relative flex justify-between items-center w-full">
-            <p className="flex items-center gap-x-1">Model <span className="text-xs">(applied to new chats)</span></p>
+            <p className="flex items-center gap-x-1">
+              Model <span className="text-xs">(applied to new chats)</span>
+            </p>
             <div>
               <button
-                className={`${mode === "dark" ? "bg-gray-selected text-white-answer" : "bg-[#CFCFCF] text-gray"} py-2 px-4 rounded-lg shadow-md hover:brightness-90 transition-all duration-300 w-[175px] truncate`}
+                className={`${
+                  mode === "dark"
+                    ? "bg-gray-selected text-white-answer"
+                    : "bg-[#CFCFCF] text-gray"
+                } py-2 px-4 rounded-lg shadow-md hover:brightness-90 transition-all duration-300 w-[175px] truncate`}
                 onClick={() => (
                   setShowModelDropdown((prev) => !prev),
                   setShowAppearanceDropdown(false)
@@ -116,7 +144,13 @@ export const Settings = ({
                 {model}
               </button>
               {showModelDropdown && (
-                <div className={`absolute mt-2 ${mode === "dark" ? "bg-gray-selected text-white-answer" : "bg-[#CFCFCF] text-gray"} py-2 rounded-lg shadow-lg w-[175px] z-50`}>
+                <div
+                  className={`absolute mt-2 ${
+                    mode === "dark"
+                      ? "bg-gray-selected text-white-answer"
+                      : "bg-[#CFCFCF] text-gray"
+                  } py-2 rounded-lg shadow-lg w-[175px] z-50`}
+                >
                   <ul>
                     {models.map((m) => (
                       <li
@@ -137,7 +171,11 @@ export const Settings = ({
             <p>Appearance</p>
             <div>
               <button
-                className={`${mode === "dark" ? "bg-gray-selected text-white-answer" : "bg-[#CFCFCF] text-gray"} py-2 px-4 rounded-lg shadow-md hover:brightness-90 transition-all duration-300 w-[175px]`}
+                className={`${
+                  mode === "dark"
+                    ? "bg-gray-selected text-white-answer"
+                    : "bg-[#CFCFCF] text-gray"
+                } py-2 px-4 rounded-lg shadow-md hover:brightness-90 transition-all duration-300 w-[175px]`}
                 onClick={() => (
                   setShowAppearanceDropdown((prev) => !prev),
                   setShowModelDropdown(false)
@@ -146,7 +184,13 @@ export const Settings = ({
                 {appearance.charAt(0).toUpperCase() + appearance.slice(1)}
               </button>
               {showAppearanceDropdown && (
-                <div className={`absolute mt-2 ${mode === "dark" ? "bg-gray-selected text-white-answer" : "bg-[#CFCFCF] text-gray"} py-2 rounded-lg shadow-lg w-[175px] z-50`}>
+                <div
+                  className={`absolute mt-2 ${
+                    mode === "dark"
+                      ? "bg-gray-selected text-white-answer"
+                      : "bg-[#CFCFCF] text-gray"
+                  } py-2 rounded-lg shadow-lg w-[175px] z-50`}
+                >
                   <ul>
                     {appearanceOptions.map((o) => (
                       <li

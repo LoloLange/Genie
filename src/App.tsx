@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { Chat } from "./components/Chat";
 import { Sidebar } from "./components/Sidebar";
-import { MessageType } from "./types";
+import { ChatsType } from "./types";
 import { Settings } from "./components/Settings";
 
 function App() {
-  const [chats, setChats] = useState<
-    { id: string; title: string; messages: MessageType[] }[]
-  >(JSON.parse(localStorage.getItem("chats")));
+  const [chats, setChats] = useState<ChatsType[]>(() => {
+    const storedChats = localStorage.getItem("chats");
+    return storedChats ? JSON.parse(storedChats) : [];
+  });
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [showNavbar, setShowNavbar] = useState<boolean>(true);
 
@@ -66,7 +67,11 @@ function App() {
         />
       </aside>
       <main
-        className={`${mode === "dark" ? "bg-gray duration-700" : "bg-light-mode duration-700"} ${
+        className={`${
+          mode === "dark"
+            ? "bg-gray duration-700"
+            : "bg-light-mode duration-700"
+        } ${
           !showNavbar && "m-5 duration-700"
         } my-5 mr-5 rounded-xl h-fit w-full z-50 ${
           showSettings && "opacity-50"

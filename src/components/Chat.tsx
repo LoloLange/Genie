@@ -100,9 +100,10 @@ export const Chat = ({
 
   useEffect(() => {
     const scrollInterval = setInterval(scrollToBottom, 300);
-    const handleScroll = clearInterval(scrollInterval);
+    const handleScroll = () => {
+      clearInterval(scrollInterval);
+    };
     chatContainerRef.current?.addEventListener("scroll", handleScroll);
-
     return () => {
       clearInterval(scrollInterval);
       chatContainerRef.current?.removeEventListener("scroll", handleScroll);
