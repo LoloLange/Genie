@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#chatContainer {
+  height: calc(100vh - 205px);
+}
+
+body {
+  background: #18181b;
+  color: #dddddd;
+  font-family: "Onest", sans-serif;
+  scroll-behavior: smooth;
+}
+
+body.dark-mode {
+  background: #18181b;
+  color: #dddddd;
+}
+
+body.light-mode {
+  background: #eee;
+  color: #18181b;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b3b3b3;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: #999999;
+}
+
+::-webkit-scrollbar-track {
+  background: #e1e1e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track:hover,
+::-webkit-scrollbar-track:active {
+  background: #d4d4d4;
+}
