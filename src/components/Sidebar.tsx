@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, SetStateAction } from "react";
-import { MessageType } from "../types";
+import { useState, useEffect, useRef } from "react";
+import { SidebarType } from "../types";
 import { Link, useParams } from "react-router-dom";
 
 export const Sidebar = ({
@@ -8,41 +8,20 @@ export const Sidebar = ({
   showNavbar,
   setShowSettings,
   mode,
-}: {
-  chats: { id: string; title: string; messages: MessageType[] }[];
-  setChats: React.Dispatch<
-    React.SetStateAction<
-      { id: string; title: string; messages: MessageType[] }[]
-    >
-  >;
-  showNavbar: boolean;
-  setShowSettings: React.Dispatch<SetStateAction<boolean>>;
-  mode: string;
-}) => {
+  setChatTitle,
+}: SidebarType) => {
+  /* --------- STATES AND REFS ------ */
+
   const [dotsClicked, setDotsClicked] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [newTitle, setNewTitle] = useState<string>("");
-  const { chatId } = useParams();
   const menuRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
 
-  const deleteChat = (chatId: string) => {
-    const newChats = chats.filter((c) => c.id !== chatId);
-    setChats(newChats);
-    location.assign("/");
-  };
+  /* --------- REACT ROUTER ------ */
 
-  const startEditing = (id: string, currentTitle: string) => {
-    setEditingId(id);
-    setNewTitle(currentTitle);
-  };
+  const { chatId } = useParams();
 
-  const handleRename = (id: string) => {
-    const updatedChats = chats.map((chat) =>
-      chat.id === id ? { ...chat, title: newTitle } : chat
-    );
-    setChats(updatedChats);
-    setEditingId(null);
-  };
+  /* --------- EFFECTS ------ */
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -64,6 +43,32 @@ export const Sidebar = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  /* --------- FUNCTIONS ------ */
+
+  const deleteChat = (chatId: string) => {
+    const newChats = chats.filter((c) => c.id !== chatId);
+    setChats(newChats);
+    location.assign("/");
+  };
+
+  const startEditing = (id: string, currentTitle: string) => {
+    setEditingId(id);
+    setNewTitle(currentTitle);
+  };
+
+  const handleRename = (id: string) => {
+    const updatedChats = chats.map((chat) => {
+      if (chat.id === id) {
+        return { ...chat, title: newTitle };
+      }
+      return chat;
+    });
+
+    setChats(updatedChats);
+    setChatTitle(newTitle);
+    setEditingId(null);
+  };
 
   return (
     <aside
@@ -117,7 +122,9 @@ export const Sidebar = ({
               </linearGradient>
             </defs>
           </svg>
-          <p className="text-3xl font-extrabold select-none tracking-wider">GENIE</p>
+          <p className="text-3xl font-extrabold select-none tracking-wider">
+            GENIE
+          </p>
         </div>
         <hr
           className={`${

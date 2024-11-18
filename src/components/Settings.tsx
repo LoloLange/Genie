@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { SetStateAction, useEffect, useState } from "react";
-import { SettingsType } from "../types";
+import { useEffect, useState } from "react";
+import { SettingsComponentType, SettingsType } from "../types";
 
 export const Settings = ({
   setShowSettings,
@@ -11,16 +11,9 @@ export const Settings = ({
   model,
   setModel,
   mode,
-}: {
-  setShowSettings: React.Dispatch<SetStateAction<boolean>>;
-  selectedColor: string;
-  setSelectedColor: React.Dispatch<SetStateAction<string>>;
-  appearance: string;
-  setAppearance: React.Dispatch<SetStateAction<string>>;
-  model: string;
-  setModel: React.Dispatch<SetStateAction<string>>;
-  mode: string;
-}) => {
+}: SettingsComponentType) => {
+  /* --------- OPTIONS ------ */
+
   const colors = ["#5645ee", "#dc2626", "#ca8a04", "#2563eb", "#16a34a"];
   const models = [
     "llama3-8b-8192",
@@ -31,12 +24,19 @@ export const Settings = ({
   ];
   const appearanceOptions = ["System", "Dark", "Light"];
 
-  const [showModelDropdown, setShowModelDropdown] = useState(false);
-  const [showAppearanceDropdown, setShowAppearanceDropdown] = useState(false);
+  /* --------- STATES ------ */
+
+  // dropdown states
+  const [showModelDropdown, setShowModelDropdown] = useState<boolean>(false);
+  const [showAppearanceDropdown, setShowAppearanceDropdown] = useState<boolean>(false);
+
+  // get saved settings
   const [settings, setSettings] = useState<SettingsType | null>(() => {
     const storedSettings = localStorage.getItem("settings");
     return storedSettings ? JSON.parse(storedSettings) : null;
   });
+
+  /* --------- EFFECTS ------ */
 
   useEffect(() => {
     if (settings) {
@@ -55,6 +55,8 @@ export const Settings = ({
     setSettings(newSettings);
     localStorage.setItem("settings", JSON.stringify(newSettings));
   }, [selectedColor, appearance, model]);
+
+  /* --------- FUNCTIONS ------ */
 
   const handleAppearanceClick = (option: string) => {
     setAppearance(option.toLowerCase());

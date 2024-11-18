@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { MessageComponentType } from "../types";
 
 export const Message = ({
   role,
@@ -11,23 +12,21 @@ export const Message = ({
   isStopped,
   finishedTyping,
   selectedColor,
-  mode
-}: {
-  role: "user" | "system";
-  content: string;
-  setFinishedTyping: Dispatch<SetStateAction<boolean>>;
-  isNewMessage: boolean | false;
-  scrollToBottom: () => void;
-  isStopped: boolean;
-  finishedTyping: boolean;
-  selectedColor: string;
-  mode: string;
-}) => {
+  mode,
+}: MessageComponentType) => {
+  /* --------- STATES ------ */
+
+  // text typing animation states
   const [displayedText, setDisplayedText] = useState<string>("");
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+
+  // copy option
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
 
+  /* --------- EFFECTS ------ */
+
+  // text typing animation
   useEffect(() => {
     if (
       isNewMessage &&
@@ -58,13 +57,15 @@ export const Message = ({
     }
   }, [isNewMessage, content, currentIndex, setFinishedTyping, isStopped]);
 
+  /* --------- FUNCTIONS ------ */
+
   const handleCopyClick = () => {
     navigator.clipboard.writeText(content);
     setCopied(true);
 
     setTimeout(() => {
       setCopied(false);
-    }, 2000)
+    }, 2000);
   };
 
   return role === "system" ? (
@@ -75,7 +76,9 @@ export const Message = ({
     >
       <div className="flex gap-x-3">
         <svg
-          className={`size-9 min-w-9 p-2 ${mode === "dark" ? "bg-gray-selected" : "bg-[#CFCFCF]"} rounded-lg shadow-xl`}
+          className={`size-9 min-w-9 p-2 ${
+            mode === "dark" ? "bg-gray-selected" : "bg-[#CFCFCF]"
+          } rounded-lg shadow-xl`}
           viewBox="0 0 109 113"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -150,7 +153,9 @@ export const Message = ({
         <path d="M20 2H10c-1.103 0-2 .897-2 2v4H4c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2v-4h4c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zM4 20V10h10l.002 10H4zm16-6h-4v-4c0-1.103-.897-2-2-2h-4V4h10v10z"></path>
       </svg>
       <svg
-        className={`size-[18px] absolute bottom-0 left-12 ${copied ? "opacity-100" : "opacity-0"} z-10`}
+        className={`size-[18px] absolute bottom-0 left-12 ${
+          copied ? "opacity-100" : "opacity-0"
+        } z-10`}
         xmlns="http://www.w3.org/2000/svg"
         width="24"
         height="24"

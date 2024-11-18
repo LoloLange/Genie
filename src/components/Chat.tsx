@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import Groq from "groq-sdk";
 import { Message } from "./Message";
-import { MessageType } from "../types";
+import { ChatType, MessageType } from "../types";
 import { useNavigate, useParams } from "react-router-dom";
 
 export const Chat = ({
@@ -14,42 +14,38 @@ export const Chat = ({
   mode,
   selectedColor,
   model,
-}: {
-  currentChatId: string | null;
-  setCurrentChatId: React.Dispatch<React.SetStateAction<string | null>>;
-  chats: { id: string; title: string; messages: MessageType[] }[];
-  setChats: React.Dispatch<
-    React.SetStateAction<
-      { id: string; title: string; messages: MessageType[] }[]
-    >
-  >;
-  setShowNavbar: React.Dispatch<React.SetStateAction<boolean>>;
-  mode: string;
-  selectedColor: string;
-  model: string;
-}) => {
+  chatTitle,
+  setChatTitle,
+}: ChatType) => {
+  /* --------- GROQ API ------ */
+
   const apiKey = import.meta.env.VITE_SECRET_GROQ_API_KEY;
   const client = new Groq({
     apiKey: apiKey,
     dangerouslyAllowBrowser: true,
   });
 
+  /* --------- STATES AND REFS ------ */
+
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [finishedTyping, setFinishedTyping] = useState<boolean>(true);
   const [textAnimation, setTextAnimation] = useState<boolean>(false);
+  const [isNewMessage, setIsNewMessage] = useState<boolean>(false);
+  const [isStopped, setIsStopped] = useState<boolean>(false);
+  const [isInEnd, setIsInEnd] = useState<boolean>(true);
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const [isNewMessage, setIsNewMessage] = useState<boolean>(false);
-  const [isStopped, setIsStopped] = useState<boolean>(false);
-  const [isInEnd, setIsInEnd] = useState(true);
+
+  /* --------- REACT ROUTER ------ */
 
   const { chatId } = useParams();
   const navigate = useNavigate();
 
-  const chatTitle = chats.find((c) => chatId === c.id)?.title;
+  /* --------- EFFECTS ------ */
 
+  // search messages when chats change
   useEffect(() => {
     if (currentChatId || chatId) {
       if (chats && chats.length > 0) {
@@ -61,11 +57,81 @@ export const Chat = ({
     }
   }, [currentChatId, chats, chatId]);
 
+  // autofocus input when the typing animation has finished
   useEffect(() => {
     if (finishedTyping) {
       inputRef.current?.focus();
     }
   }, [finishedTyping]);
+
+  // when the user message is sent, scroll to bottom
+  useEffect(() => {
+    if (!finishedTyping || textAnimation) {
+      setIsInEnd(true);
+      scrollToBottom();
+    }
+  }, [messages, finishedTyping, textAnimation]);
+
+  // when we enter a chat...
+  useEffect(() => {
+    const isNewChat = chats.find((c) => c.id === chatId)?.messages.length === 2;
+    if (!isNewChat) {
+      setIsNewMessage(false);
+    }
+    // scroll to bottom
+    setTimeout(() => {
+      setIsInEnd(true);
+      scrollToBottom();
+    }, 100);
+
+    // set the chat title
+    const chatTitle = chats.find((c) => c.id === chatId)?.title;
+    if (chatTitle) {
+      setChatTitle(chatTitle);
+    }
+  }, [chatId]);
+
+  // during the typing animation, scroll to bottom every 300ms
+  useEffect(() => {
+    const scrollInterval = setInterval(scrollToBottom, 300);
+    const handleScroll = clearInterval(scrollInterval);
+    chatContainerRef.current?.addEventListener("scroll", () => handleScroll);
+    return () => {
+      clearInterval(scrollInterval);
+      chatContainerRef.current?.removeEventListener(
+        "scroll",
+        () => handleScroll
+      );
+    };
+  }, []);
+
+  // check when the user is in the end/bottom of the chat
+  useEffect(() => {
+    if (finishedTyping) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          setIsInEnd(entry.isIntersecting);
+        },
+        {
+          root: null,
+          threshold: 0.1,
+        }
+      );
+
+      if (messagesEndRef.current) {
+        observer.observe(messagesEndRef.current);
+      }
+      return () => {
+        if (messagesEndRef.current) {
+          observer.unobserve(messagesEndRef.current);
+        }
+      };
+    } else {
+      setIsInEnd(true);
+    }
+  }, []);
+
+  /* --------- FUNCTIONS ------ */
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -84,30 +150,22 @@ export const Chat = ({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(() => {
-    if (!finishedTyping || textAnimation) {
-      setIsInEnd(true);
-      scrollToBottom();
-    }
-  }, [messages, finishedTyping, textAnimation]);
+  const setNewChat = () => {
+    setChatTitle("");
+    navigate("/");
+    setCurrentChatId("");
+    setMessages([]);
+    inputRef.current?.focus();
+  };
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsInEnd(true);
-      scrollToBottom();
-    }, 100);
-  }, [chatId]);
+  // const handleStopTyping = () => {
+  //   setIsStopped(true);
+  //   setFinishedTyping(true);
+  // };
 
-  useEffect(() => {
-    const scrollInterval = setInterval(scrollToBottom, 300);
-    const handleScroll = clearInterval(scrollInterval);
-    chatContainerRef.current?.addEventListener("scroll", () => handleScroll);
-    return () => {
-      clearInterval(scrollInterval);
-      chatContainerRef.current?.removeEventListener("scroll", () => handleScroll);
-    };
-  }, []);
+  /* --------- CHAT FUNCTIONALITY ------ */
 
+  // generate title
   async function generateTitle(inputValue: string, systemContent: string) {
     const prompt =
       "Based on the following chat, suggest an accurate title with no more than 5 words of the language of the chat without saying anything else (p.e: '' or / ), just answer with the title and no other words than those:" +
@@ -133,6 +191,7 @@ export const Chat = ({
     return newTitle;
   }
 
+  // chat
   async function chatCompletion(): Promise<void> {
     if (inputValue.length > 0) {
       setIsStopped(false);
@@ -202,69 +261,6 @@ export const Chat = ({
     }
   }
 
-  const setNewChat = () => {
-    navigate("/");
-    setCurrentChatId("");
-    setMessages([]);
-  };
-
-  useEffect(() => {}, []);
-
-  const [displayedTitle, setDisplayedTitle] = useState<string>("");
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-
-  useEffect(() => {
-    if (chatTitle) {
-      let timer: NodeJS.Timeout = setTimeout(() => {});
-
-      if (currentIndex < chatTitle.length) {
-        timer = setInterval(() => {
-          setDisplayedTitle(chatTitle.slice(0, currentIndex + 1));
-          setCurrentIndex((prevIndex) => prevIndex + 1);
-        }, 40);
-      } else {
-        clearInterval(timer);
-      }
-
-      return () => clearInterval(timer);
-    }
-  }, [chatTitle, currentIndex]);
-
-  useEffect(() => {
-    setDisplayedTitle("");
-    setCurrentIndex(0);
-  }, [chatId]);
-
-  useEffect(() => {
-    if (finishedTyping) {
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          setIsInEnd(entry.isIntersecting);
-        },
-        {
-          root: null,
-          threshold: 0.1,
-        }
-      );
-
-      if (messagesEndRef.current) {
-        observer.observe(messagesEndRef.current);
-      }
-      return () => {
-        if (messagesEndRef.current) {
-          observer.unobserve(messagesEndRef.current);
-        }
-      };
-    } else {
-      setIsInEnd(true);
-    }
-  }, []);
-
-  const handleStopTyping = () => {
-    setIsStopped(true);
-    setFinishedTyping(true);
-  };
-
   return (
     <>
       <nav
@@ -292,7 +288,7 @@ export const Chat = ({
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M6 21a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3zm12 -16h-8v14h8a1 1 0 0 0 1 -1v-12a1 1 0 0 0 -1 -1" />
             </svg>
-            {chatTitle ? <p>{displayedTitle}</p> : "New Chat"}
+            {chatTitle ? <p>{chatTitle}</p> : "New Chat"}
           </div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -373,10 +369,8 @@ export const Chat = ({
                   finishedTyping &&
                   "brightness-75 cursor-auto"
                 } transition-all duration-300 shadow-lg cursor-pointer`}
-                onClick={
-                  finishedTyping === true ? chatCompletion : handleStopTyping
-                }
-                disabled={inputValue.length === 0 && finishedTyping}
+                onClick={chatCompletion}
+                disabled={inputValue.length === 0 && !finishedTyping}
               >
                 {finishedTyping ? (
                   <svg

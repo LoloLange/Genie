@@ -5,25 +5,39 @@ import { ChatsType } from "./types";
 import { Settings } from "./components/Settings";
 
 function App() {
+
+  /* --------- STATES ------ */
+
+  // get saved chats
   const [chats, setChats] = useState<ChatsType[]>(() => {
     const storedChats = localStorage.getItem("chats");
     return storedChats ? JSON.parse(storedChats) : [];
   });
+
+  // chat info
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const [chatTitle, setChatTitle] = useState<string>("");
+
+  // navbar state
   const [showNavbar, setShowNavbar] = useState<boolean>(true);
 
+  // Settings
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [selectedColor, setSelectedColor] = useState<string>("#5645ee");
   const [appearance, setAppearance] = useState<string>("system");
   const [model, setModel] = useState<string>("llama3-8b-8192");
-  const [mode, setMode] = useState<string>(
+  const [mode, setMode] = useState<'dark' | 'light'>(
     window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
   );
 
+  /* --------- EFFECTS ------ */
+
+  // every time chats change, the local storage is updated automatically
   useEffect(() => {
     localStorage.setItem("chats", JSON.stringify(chats));
   }, [chats]);
 
+  // change between appearances/modes
   useEffect(() => {
     if (appearance === "system") {
       if (
@@ -64,6 +78,7 @@ function App() {
           showNavbar={showNavbar}
           setShowSettings={setShowSettings}
           mode={mode}
+          setChatTitle={setChatTitle}
         />
       </aside>
       <main
@@ -86,6 +101,8 @@ function App() {
           mode={mode}
           selectedColor={selectedColor}
           model={model}
+          chatTitle={chatTitle}
+          setChatTitle={setChatTitle}
         />
       </main>
       <section
