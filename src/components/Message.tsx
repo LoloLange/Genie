@@ -70,13 +70,13 @@ export const Message = ({
 
   return role === "system" ? (
     <section
-      className="flex flex-col relative pb-7"
+      className="flex flex-col relative pb-7 min-[2000px]:pb-11"
       onMouseEnter={() => setShowOptions(true)}
       onMouseLeave={() => setShowOptions(false)}
     >
-      <div className="flex gap-x-3">
+      <div className="flex gap-x-3 min-[2000px]:gap-x-5">
         <svg
-          className={`size-9 min-w-9 p-2 ${
+          className={`size-9 min-w-9 min-[2000px]:size-12 min-[2000px]:min-w-12 p-2 ${
             mode === "dark" ? "bg-gray-selected" : "bg-[#CFCFCF]"
           } rounded-lg shadow-xl`}
           viewBox="0 0 109 113"
@@ -124,7 +124,7 @@ export const Message = ({
         {isNewMessage ? (
           <ReactMarkdown
             className={
-              "flex flex-col gap-y-5 prose-invert overflow-auto w-full pr-12 min-[1100px]:pr-28"
+              "flex flex-col gap-y-5 prose-invert overflow-auto w-full pr-12 min-[1100px]:pr-28 min-[2000px]:text-xl min-[2500px]:text-2xl"
             }
           >
             {displayedText}
@@ -132,7 +132,7 @@ export const Message = ({
         ) : (
           <ReactMarkdown
             className={
-              "flex flex-col gap-y-5 prose-invert overflow-auto w-full pr-12 min-[1100px]:pr-28"
+              "flex flex-col gap-y-5 prose-invert overflow-auto w-full pr-12 min-[1100px]:pr-28 min-[2000px]:text-xl min-[2500px]:text-2xl"
             }
           >
             {content}
@@ -140,7 +140,7 @@ export const Message = ({
         )}
       </div>
       <svg
-        className={`size-[18px] absolute bottom-0 left-12 cursor-pointer z-20 ${
+        className={`size-[18px] min-[2000px]:size-[24px] absolute bottom-0 left-12 min-[2000px]:left-16 cursor-pointer z-20 ${
           showOptions && !copied && finishedTyping ? "opacity-100" : "opacity-0"
         } transition-all duration-150 `}
         xmlns="http://www.w3.org/2000/svg"
@@ -153,7 +153,7 @@ export const Message = ({
         <path d="M20 2H10c-1.103 0-2 .897-2 2v4H4c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2v-4h4c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zM4 20V10h10l.002 10H4zm16-6h-4v-4c0-1.103-.897-2-2-2h-4V4h10v10z"></path>
       </svg>
       <svg
-        className={`size-[18px] absolute bottom-0 left-12 ${
+        className={`size-[18px] min-[2000px]:size-[24px] absolute bottom-0 left-12 min-[2000px]:left-16 ${
           copied ? "opacity-100" : "opacity-0"
         } z-10`}
         xmlns="http://www.w3.org/2000/svg"
@@ -166,11 +166,11 @@ export const Message = ({
       </svg>
     </section>
   ) : (
-    <div className="flex justify-end gap-x-3">
-      <p className="mt-1 prose-invert">{content}</p>
+    <div className="flex justify-end text-end gap-x-3 min-[2000px]:gap-x-5">
+      <p className="mt-1 prose-invert min-[2000px]:text-xl min-[2500px]:text-2xl pl-12 min-[1100px]:pl-28">{content}</p>
       <svg
         style={{ backgroundColor: selectedColor }}
-        className="size-9 fill-white-answer p-2 rounded-lg shadow-xl"
+        className="size-9 min-w-9 min-[2000px]:size-12 min-[2000px]:min-w-12 fill-white-answer p-2 rounded-lg shadow-xl"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         data-darkreader-inline-fill=""

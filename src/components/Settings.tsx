@@ -76,7 +76,7 @@ export const Settings = ({
 
   return (
     <div
-      className={`w-[500px] ${
+      className={`w-[300px] min-[450px]:w-[375px] min-[650px]:w-[500px] min-[2000px]:w-[700px] min-[2000px]:text-2xl max-[651px]:text-sm ${
         mode === "dark"
           ? "bg-gray border-gray-selected"
           : "bg-light-mode border-light-mode-selected"
@@ -87,16 +87,16 @@ export const Settings = ({
           mode === "dark"
             ? "border-gray-selected"
             : "border-light-mode-selected"
-        }  pb-2`}
+        }  pb-2 min-[2000px]:pb-3`}
       >
-        <p className="font-semibold text-lg">Settings</p>
+        <p className="font-semibold text-lg min-[2000px]:text-2xl">Settings</p>
         <svg
           onClick={() => (
             setShowSettings(false),
             setShowAppearanceDropdown(false),
             setShowModelDropdown(false)
           )}
-          className="size-6 fill-[#aaa] cursor-pointer"
+          className="size-6 min-[2000px]:size-8 fill-[#aaa] cursor-pointer"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 384 512"
         >
@@ -104,10 +104,10 @@ export const Settings = ({
         </svg>
       </div>
 
-      <div className="mt-4 flex flex-col gap-y-4">
+      <div className="mt-4 min-[2000px]:mt-5 flex flex-col gap-y-4">
         <div className="flex justify-between items-center">
           <p>Page color</p>
-          <div className="flex items-center gap-x-2 w-[175px]">
+          <div className="flex items-center gap-x-2 w-[150px] min-[650px]:w-[175px] min-[2000px]:w-[230px]">
             {colors.map((c) => (
               <span
                 key={c}
@@ -121,7 +121,7 @@ export const Settings = ({
                     : mode === "dark"
                     ? "border-gray-selected"
                     : "border-light-mode-selected"
-                } size-7 flex rounded-full cursor-pointer duration-300`}
+                } size-6 min-[650px]:size-7 min-[2000px]:size-10 flex rounded-full cursor-pointer duration-300`}
               ></span>
             ))}
           </div>
@@ -129,7 +129,7 @@ export const Settings = ({
         <div className="flex flex-col items-start gap-y-3">
           <div className="relative flex justify-between items-center w-full">
             <p className="flex items-center gap-x-1">
-              Model <span className="text-xs">(applied to new chats)</span>
+              Model {window.innerWidth >= 450 && "*"} <span className="max-[450px]:hidden text-[10px] max-[651px]:pr-1 leading-3 min-[650px]:text-xs min-[2000px]:text-sm min-[2500px]:text-base">(applied to new chats)</span>
             </p>
             <div>
               <button
@@ -137,7 +137,7 @@ export const Settings = ({
                   mode === "dark"
                     ? "bg-gray-selected text-white-answer"
                     : "bg-[#CFCFCF] text-gray"
-                } py-2 px-4 rounded-lg shadow-md hover:brightness-90 transition-all duration-300 w-[175px] truncate`}
+                } py-2 px-4 min-[2000px]:py-4 rounded-lg shadow-md hover:brightness-90 transition-all duration-300 w-[150px] min-[650px]:w-[175px] min-[2000px]:w-[230px] min-[2000px]:text-2xl truncate`}
                 onClick={() => (
                   setShowModelDropdown((prev) => !prev),
                   setShowAppearanceDropdown(false)
@@ -151,7 +151,7 @@ export const Settings = ({
                     mode === "dark"
                       ? "bg-gray-selected text-white-answer"
                       : "bg-[#CFCFCF] text-gray"
-                  } py-2 rounded-lg shadow-lg w-[175px] z-50`}
+                  } py-2 rounded-lg shadow-lg w-[150px] min-[650px]:w-[175px] min-[2000px]:w-[230px] min-[2000px]:text-2xl z-50`}
                 >
                   <ul>
                     {models.map((m) => (
@@ -177,7 +177,7 @@ export const Settings = ({
                   mode === "dark"
                     ? "bg-gray-selected text-white-answer"
                     : "bg-[#CFCFCF] text-gray"
-                } py-2 px-4 rounded-lg shadow-md hover:brightness-90 transition-all duration-300 w-[175px]`}
+                } py-2 px-4 min-[2000px]:py-4 rounded-lg shadow-md hover:brightness-90 transition-all duration-300 w-[150px] min-[650px]:w-[175px] min-[2000px]:w-[230px] min-[2000px]:text-2xl`}
                 onClick={() => (
                   setShowAppearanceDropdown((prev) => !prev),
                   setShowModelDropdown(false)
@@ -191,7 +191,7 @@ export const Settings = ({
                     mode === "dark"
                       ? "bg-gray-selected text-white-answer"
                       : "bg-[#CFCFCF] text-gray"
-                  } py-2 rounded-lg shadow-lg w-[175px] z-50`}
+                  } py-2 rounded-lg shadow-lg w-[150px] min-[650px]:w-[175px] min-[2000px]:w-[230px] min-[2000px]:text-2xl z-50`}
                 >
                   <ul>
                     {appearanceOptions.map((o) => (
@@ -208,10 +208,11 @@ export const Settings = ({
               )}
             </div>
           </div>
+          <p className="text-xs">{window.innerWidth >= 450 && "* applied to new chats"}</p>
           <button
             onClick={handleRestoreSettings}
             style={{ backgroundColor: selectedColor }}
-            className="p-2 rounded-lg px-4 flex justify-center items-center w-full duration-300 text-white-answer"
+            className="p-2 min-[2000px]:p-3 rounded-lg px-4 flex justify-center items-center w-full duration-300 text-white-answer min-[2000px]:mt-2"
           >
             Restore Settings
           </button>

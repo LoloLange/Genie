@@ -9,6 +9,9 @@ export const Sidebar = ({
   setShowSettings,
   mode,
   setChatTitle,
+  setShowNavbar,
+  userWidthMobile,
+  setShowLogout,
 }: SidebarType) => {
   /* --------- STATES AND REFS ------ */
 
@@ -72,14 +75,14 @@ export const Sidebar = ({
 
   return (
     <aside
-      className={`flex flex-col h-full overflow-hidden w-[250px] ${
+      className={`flex flex-col h-full overflow-hidden w-[200px] min-[500px]:w-[250px] min-[2000px]:w-[350px] ${
         showNavbar ? "opacity-100 duration-700" : "opacity-0 duration-700"
       }`}
     >
-      <section className="flex flex-col gap-y-1 overflow-y-auto w-[250px]">
-        <div className="flex items-center justify-center gap-x-4">
+      <section className="flex flex-col gap-y-1 overflow-y-auto w-[200px] min-[500px]:w-[250px] min-[2000px]:w-[350px]">
+        <div className="flex items-center justify-center gap-x-4 min-[2000px]:gap-x-6">
           <svg
-            className="size-14"
+            className="size-14 min-[2000px]:size-20"
             viewBox="0 0 109 113"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -122,7 +125,7 @@ export const Sidebar = ({
               </linearGradient>
             </defs>
           </svg>
-          <p className="text-3xl font-extrabold select-none tracking-wider">
+          <p className="text-3xl min-[2000px]:text-4xl font-extrabold select-none tracking-wider">
             GENIE
           </p>
         </div>
@@ -137,7 +140,7 @@ export const Sidebar = ({
             [...chats].reverse().map((c) => (
               <Link to={"/" + c.id} key={c.id}>
                 <div
-                  className={`flex justify-between items-center px-4 py-2.5 rounded-xl cursor-pointer relative ${
+                  className={`flex justify-between items-center px-4 py-2.5 min-[2000px]:py-3.5 rounded-xl cursor-pointer relative ${
                     chatId === c.id
                       ? mode === "dark"
                         ? "bg-gray-selected shadow-lg"
@@ -147,7 +150,7 @@ export const Sidebar = ({
                       : "hover:bg-[#CFCFCF] transition-all hover:duration-300"
                   }`}
                 >
-                  <div className="flex items-center gap-x-2 w-[215px] justify-between">
+                  <div className="flex items-center gap-x-2 w-[215px] min-[2000px]:w-[350px] justify-between min-[2000px]:text-xl">
                     {editingId === c.id ? (
                       <input
                         type="text"
@@ -157,17 +160,22 @@ export const Sidebar = ({
                         onKeyDown={(e) => {
                           if (e.key === "Enter") handleRename(c.id);
                         }}
-                        className="outline outline-slate-400 outline-offset-2 mr-2 bg-transparent"
+                        className="outline outline-slate-400 outline-offset-2 mr-2 bg-transparent max-[800px]:w-full"
                         autoFocus
                       />
                     ) : (
-                      <p className="truncate">{c.title}</p>
+                      <p
+                        className="truncate w-full"
+                        onClick={() => userWidthMobile && setShowNavbar(false)}
+                      >
+                        {c.title}
+                      </p>
                     )}
                     <p
                       onClick={() =>
                         setDotsClicked((prev) => (prev === c.id ? null : c.id))
                       }
-                      className="text-xl mb-2 brightness-75 hover:brightness-100 transition-all hover:duration-300"
+                      className="text-xl min-[2000px]:text-2xl mb-2 brightness-75 hover:brightness-100 transition-all hover:duration-300"
                     >
                       ...
                     </p>
@@ -176,7 +184,7 @@ export const Sidebar = ({
                     ref={(ref) => menuRefs.current.set(c.id, ref)}
                     className={`${dotsClicked === c.id ? "block" : "hidden"} ${
                       mode === "dark" ? "bg-[#2F2F2F]" : "bg-[#BFBFBF]"
-                    } p-5 absolute right-0 top-11 rounded-xl flex flex-col gap-y-5 z-50`}
+                    } p-5 absolute right-0 top-11 rounded-xl flex flex-col gap-y-5 z-50 min-[2000px]:text-lg`}
                     id={c.id}
                   >
                     <p
@@ -198,13 +206,13 @@ export const Sidebar = ({
         </div>
       </section>
 
-      <div className="flex flex-col gap-y-1 mt-2">
+      <div className="flex flex-col gap-y-1 mt-2 min-[2000px]:text-xl">
         <p
           className="flex items-center gap-x-2 px-2 py-3 rounded-xl cursor-pointer hover:brightness-90 transition-all hover:duration-300"
           onClick={() => setShowSettings(true)}
         >
           <svg
-            className="size-6 stroke-yellow-700 fill-transparent"
+            className="size-6 min-[2000px]:size-8 stroke-yellow-700 fill-transparent"
             xmlns="http://www.w3.org/2000/svg"
             width="24"
             height="24"
@@ -219,9 +227,12 @@ export const Sidebar = ({
           </svg>
           Settings
         </p>
-        <p className="flex items-center gap-x-2 px-2 py-3 rounded-xl cursor-pointer hover:brightness-90 transition-all hover:duration-300">
+        <p
+          className="flex items-center gap-x-2 px-2 py-3 rounded-xl cursor-pointer hover:brightness-90 transition-all hover:duration-300"
+          onClick={() => setShowLogout(true)}
+        >
           <svg
-            className="size-6 stroke-red-600 fill-transparent"
+            className="size-6 min-[2000px]:size-8 stroke-red-600 fill-transparent"
             xmlns="http://www.w3.org/2000/svg"
             width="24"
             height="24"

@@ -16,6 +16,7 @@ export const Chat = ({
   model,
   chatTitle,
   setChatTitle,
+  userWidthMobile
 }: ChatType) => {
   /* --------- GROQ API ------ */
 
@@ -263,22 +264,22 @@ export const Chat = ({
 
   return (
     <>
-      <nav
+      <div
         className={`${
           mode === "dark" ? "bg-gray" : "bg-light-mode"
-        } rounded-xl w-full`}
+        } rounded-xl w-screen min-[650px]:w-[calc(100vw-40px)] min-[800px]:w-full overflow-x-hidden`}
       >
         <header
           className={`border-b-2 ${
             mode === "dark"
               ? "border-b-gray-selected"
               : "border-b-light-mode-selected"
-          } p-5 flex justify-between items-center h-[60px]`}
+          } p-5 flex justify-between items-center h-[60px] min-[2000px]:h-[90px] ${!finishedTyping && userWidthMobile && "pointer-events-none"}`}
         >
           <div className="flex gap-x-3 items-center">
             <svg
               onClick={() => setShowNavbar((prev) => !prev)}
-              className="size-7 cursor-pointer hover:brightness-[0.85] transition-all duration-300"
+              className="size-7 min-[2000px]:size-9 cursor-pointer hover:brightness-[0.85] transition-all duration-300"
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
@@ -288,11 +289,13 @@ export const Chat = ({
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M6 21a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3zm12 -16h-8v14h8a1 1 0 0 0 1 -1v-12a1 1 0 0 0 -1 -1" />
             </svg>
-            {chatTitle ? <p>{chatTitle}</p> : "New Chat"}
+            <p className="min-[2000px]:text-xl">
+              {chatTitle ? chatTitle : "New Chat"}
+            </p>
           </div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="size-6 cursor-pointer hover:brightness-[0.85] transition-all duration-300"
+            className="size-6 min-[2000px]:size-8 cursor-pointer hover:brightness-[0.85] transition-all duration-300"
             onClick={setNewChat}
             fill={mode === "dark" ? "#ddd" : "#444"}
             width="24"
@@ -304,13 +307,14 @@ export const Chat = ({
         </header>
         <main
           ref={chatContainerRef}
-          className={`px-10 relative ${
+          className={`px-3 min-[400px]:px-5 min-[550px]:px-10 relative ${
             !finishedTyping && "pointer-events-none"
           }`}
+          onClick={() => userWidthMobile && setShowNavbar(false)}
         >
           <section
             id="chatContainer"
-            className="p-5 h-full flex flex-col gap-y-2 overflow-y-auto"
+            className="p-5 h-full flex flex-col gap-y-2 min-[2000px]:gap-y-3 overflow-y-auto"
           >
             {messages.map((msg, index) => (
               <Message
@@ -331,12 +335,14 @@ export const Chat = ({
             <div id="scrollDiv" ref={messagesEndRef} />
             <svg
               className={`absolute ${
-                !isInEnd ? "bottom-[120px]" : "bottom-[65px]"
+                !isInEnd
+                  ? "bottom-[145px] min-[372px]:bottom-[135px] min-[1080px]:bottom-[120px] min-[2000px]:bottom-[155px]"
+                  : "bottom-[90px] min-[372px]:bottom-[75px] min-[812px]:bottom-[65px]"
               } z-20 duration-300 left-[50%] rounded-full border-2 ${
                 mode === "dark"
                   ? "border-gray-selected fill-[#ECECEC] bg-gray"
                   : "fill-gray-selected border-[#cfcfcf] bg-white-answer"
-              }  p-1.5  cursor-pointer`}
+              } p-1.5 min-[2000px]:p-2.5 cursor-pointer min-[2000px]:size-[50px]`}
               xmlns="http://www.w3.org/2000/svg"
               width="32"
               height="32"
@@ -346,8 +352,8 @@ export const Chat = ({
               <path d="M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z" />
             </svg>
           </section>
-          <footer className="flex flex-col gap-y-2 items-center h-[60px]">
-            <div className="flex w-full gap-x-3 h-[50px]">
+          <footer className="flex flex-col gap-y-2 items-center pb-5">
+            <div className="flex w-full gap-x-3 h-[50px] min-[2000px]:h-[70px]">
               <input
                 type="text"
                 value={inputValue}
@@ -357,9 +363,8 @@ export const Chat = ({
                   mode === "dark"
                     ? "bg-gray-selected text-white-answer"
                     : "bg-[#cfcfcf] text-gray-selected"
-                }  rounded-lg shadow-lg p-3 outline-none w-full h-[50px] z-30`}
+                }  rounded-lg shadow-lg p-3 outline-none w-full h-[50px] min-[2000px]:h-[70px] min-[2000px]:text-lg min-[2500px]:text-xl z-30 ${!finishedTyping && "pointer-events-none"}`}
                 placeholder="Start typing..."
-                disabled={!finishedTyping}
                 onFocus={() => setTextAnimation(false)}
                 ref={inputRef}
               />
@@ -375,7 +380,7 @@ export const Chat = ({
                 {finishedTyping ? (
                   <svg
                     style={{ backgroundColor: selectedColor }}
-                    className="fill-white-answer p-3 rounded-lg size-[50px] hover:brightness-90 transition-all duration-500"
+                    className="fill-white-answer p-3 rounded-lg size-[50px] min-[2000px]:size-[70px] hover:brightness-90 transition-all duration-500"
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
                     height="24"
@@ -386,7 +391,7 @@ export const Chat = ({
                 ) : (
                   <svg
                     style={{ backgroundColor: selectedColor }}
-                    className="fill-white-answer p-2.5 rounded-lg size-[50px] hover:brightness-90 transition-all duration-500"
+                    className="fill-white-answer p-2.5 rounded-lg size-[50px] min-[2000px]:size-[70px] hover:brightness-90 transition-all duration-500"
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
                     height="24"
@@ -397,22 +402,22 @@ export const Chat = ({
                 )}
               </button>
             </div>
+            <p className="text-[11px] min-[2000px]:text-sm min-[2500px]:text-base text-center mt-2.5 text-zinc-400">
+              Genie may produce innacurate information about people, places or
+              facts. Please check important information. Developed by{" "}
+              <a
+                style={{ color: selectedColor }}
+                target="_blank"
+                href="https://github.com/LoloLange"
+                className=" font-semibold cursor-pointer duration-300"
+              >
+                {" "}
+                LoloLange
+              </a>
+            </p>
           </footer>
-          <p className="text-[11px] text-center mt-2.5 text-zinc-400 pb-5">
-            Genie may produce innacurate information about people, places or
-            facts. Please check important information. Developed by{" "}
-            <a
-              style={{ color: selectedColor }}
-              target="_blank"
-              href="https://github.com/LoloLange"
-              className=" font-semibold cursor-pointer duration-300"
-            >
-              {" "}
-              LoloLange
-            </a>
-          </p>
         </main>
-      </nav>
+      </div>
     </>
   );
 };

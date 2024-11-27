@@ -3,7 +3,37 @@
 @tailwind utilities;
 
 #chatContainer {
-  height: calc(100vh - 205px);
+  height: calc(100vh - 180px);
+}
+
+@media (min-width: 650px) {
+  #chatContainer {
+    height: calc(100vh - 220px);
+  }
+}
+
+@media (min-width: 738px) {
+  #chatContainer {
+    height: calc(100vh - 220px);
+  }
+}
+
+@media (min-width: 813px) {
+  #chatContainer {
+    height: calc(100vh - 205px);
+  }
+}
+
+@media (min-width: 2000px) {
+  #chatContainer {
+    height: calc(100vh - 255px);
+  }
+}
+
+@media (min-width: 2500px) {
+  #chatContainer {
+    height: calc(100vh - 265px);
+  }
 }
 
 body {

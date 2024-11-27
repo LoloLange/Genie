@@ -32,6 +32,7 @@ export interface ChatType {
   model: string;
   chatTitle: string;
   setChatTitle: React.Dispatch<React.SetStateAction<string>>;
+  userWidthMobile: boolean;
 }
 
 export interface SidebarType {
@@ -45,6 +46,9 @@ export interface SidebarType {
   setShowSettings: React.Dispatch<SetStateAction<boolean>>;
   mode: string;
   setChatTitle: React.Dispatch<SetStateAction<string>>;
+  setShowNavbar: React.Dispatch<React.SetStateAction<boolean>>;
+  userWidthMobile: boolean;
+  setShowLogout: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export interface SettingsComponentType {
